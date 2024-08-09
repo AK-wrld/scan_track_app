@@ -66,5 +66,27 @@ export const styles = StyleSheet.create({
     width:"60%",
     alignSelf:"center",
     borderRadius:10
+  },
+  nameContainer: {
+    flexDirection:"row",
+    // backgroundColor:"red",
+    width:"100%",
+    justifyContent:"space-around"
+  },
+  nameInput: {
+    width: "50%",
+    alignItems:"center",
+  },
+  radioContainer: {
+    flexDirection:"row",
+    justifyContent:"space-between",
+    width:"90%",
+    alignItems:"center",
+    marginBottom:10
+    // backgroundColor:"red"
+  },
+  label: {
+    fontSize:14,
+    color:secondaryText
   }
 });

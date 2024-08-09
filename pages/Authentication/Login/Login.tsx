@@ -1,19 +1,29 @@
-import React, { useState } from 'react';
-import { Text, View } from 'react-native';
+import React, { useContext, useState } from 'react';
+import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { styles } from '../Login/Style';
-import { globalStyles } from '../../Globals/globalStyles';
-import { primaryBg, primaryText, quote, secondaryBg, secondaryDarkBg, secondaryText } from '../../Globals/constants';
+import { styles } from '../Style';
+import { globalStyles } from '../../../Globals/globalStyles';
+import { primaryBg, primaryText, quote, secondaryBg, secondaryDarkBg, secondaryText } from '../../../Globals/constants';
 import { Avatar, Button, TextInput } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
+import { useNavigation } from '@react-navigation/native';
 import { NavigationProp } from '@react-navigation/native';
-
+import { OrientationContext } from '../../../context/OrientationContext';
 type Props = {
   navigation: NavigationProp<any>;
 };
 
-const Signup = ({ navigation }:Props) => {
+
+const Login = ({ navigation }:Props) => {
+  const context = useContext(OrientationContext);
+
+if (!context) {
+  throw new Error('OrientationProvider not found in component tree');
+}
+
+const { orientation } = context;
+  const Container = orientation === 'portrait' ? View : ScrollView;
+  // console.warn(orientation)
   const [email, setEmail] = useState({
     value: "",
     isError: false,
@@ -24,8 +34,9 @@ const Signup = ({ navigation }:Props) => {
     isError: false,
     error: ""
   });
+
   return (
-    <View style={globalStyles.main}>
+    <Container style={[globalStyles.main]}>
      <View style={styles.headingBox}>
           <Text style={[globalStyles.boldText, styles.title]}>Scan Track</Text>
           <Text style={[globalStyles.italicText, styles.quote]}>{quote}</Text>
@@ -33,7 +44,7 @@ const Signup = ({ navigation }:Props) => {
     
     <View style={[{justifyContent:"flex-end"}]}>
       <View style={styles.loginContainer}>
-       <Text style={[globalStyles.boldText,styles.title]}>Signup</Text>
+       <Text style={[globalStyles.boldText,styles.title]}>Login</Text>
         <View style={styles.formBox}>
           <TextInput
             label="Email"
@@ -60,16 +71,16 @@ const Signup = ({ navigation }:Props) => {
             onChangeText={(pass: string) => setPass((prev: any) => ({ ...prev, value: pass }))}
             style={styles.inputBox}
           />
-          <Button labelStyle={{fontFamily:"Poppins-Regular"}} rippleColor={secondaryBg} mode="contained" style={styles.loginBtn} onPress={() => console.log('Pressed')}>Signup</Button>
+          <Button labelStyle={{fontFamily:"Poppins-Regular"}} rippleColor={secondaryBg} mode="contained" style={styles.loginBtn} onPress={() => console.log('Pressed')}>Login</Button>
         </View>
         <View style={styles.footerBox}>
         <Avatar.Icon icon="google" size={40} color={secondaryText} style={{backgroundColor:secondaryDarkBg,alignSelf:"center",marginTop:20}} />
-        <Button textColor={secondaryText} style={styles.footerText} labelStyle={{fontFamily:"Poppins-Regular"}} onPress={()=>navigation.navigate('Login')}>Existing User? Login</Button>
+        <Button textColor={secondaryText} style={styles.footerText} labelStyle={{fontFamily:"Poppins-Regular"}} onPress={()=>navigation.navigate('Signup')}>New user? Signup</Button>
         </View>
       </View>
     </View>
-    </View>
-  )
-}
+    </Container>
+  );
+};
 
-export default Signup
+export default Login;
