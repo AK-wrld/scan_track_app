@@ -7,4 +7,6 @@ export interface OrientationContextProps {
   setOrientation: React.Dispatch<React.SetStateAction<Orientation>>;
 }
 
-export const OrientationContext = React.createContext<OrientationContextProps | undefined>(undefined);
+export const OrientationContext = React.createContext<
+  OrientationContextProps | undefined
+>(undefined);

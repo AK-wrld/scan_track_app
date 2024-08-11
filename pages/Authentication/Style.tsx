@@ -1,92 +1,97 @@
-import { StyleSheet } from "react-native";
-import { primaryBg, primaryText, secondaryBg, secondaryDarkBg, secondaryText } from '../../Globals/constants';
+import {StyleSheet} from 'react-native';
+import {
+  primaryBg,
+  primaryText,
+  secondaryBg,
+  secondaryDarkBg,
+  secondaryText,
+} from '../../Globals/constants';
 
 export const styles = StyleSheet.create({
   loginContainer: {
-    width: "100%",
-    height: "80%",
+    width: '100%',
+    height: '80%',
     // justifyContent:"space-evenly",
-    paddingTop:20,
+    paddingTop: 20,
     backgroundColor: secondaryBg,
     borderTopLeftRadius: 50,
     borderTopRightRadius: 50,
     borderBottomLeftRadius: 0,
     // borderBottomRightRadius: 50,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.8,
     shadowRadius: 2,
     elevation: 1,
-    gap:20
+    gap: 20,
   },
   headingBox: {
     // backgroundColor: "black"
-    height:"20%",
-    justifyContent:"center",
-    paddingTop:40,
-    gap:10
+    height: '20%',
+    justifyContent: 'center',
+    paddingTop: 40,
+    gap: 10,
   },
   title: {
     fontSize: 30,
     color: secondaryText,
-    textAlign: "center",
+    textAlign: 'center',
     paddingTop: 20,
-    
   },
   quote: {
     fontSize: 16,
     color: primaryText,
-    textAlign: "center"
+    textAlign: 'center',
   },
   formBox: {
     height: 220,
     // backgroundColor: "red",
-    justifyContent: "space-evenly",
-    alignItems: "center", 
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
   },
   inputBox: {
-    width: "80%",
-    // marginVertical: 10, 
+    width: '80%',
+    // marginVertical: 10,
   },
   loginBtn: {
-    backgroundColor:secondaryDarkBg,
-    color:secondaryText,
-    width:"80%",
-    borderRadius:10,
-    elevation:1,
-    marginTop:30
+    backgroundColor: secondaryDarkBg,
+    color: secondaryText,
+    width: '80%',
+    borderRadius: 10,
+    elevation: 1,
+    marginTop: 30,
   },
   footerBox: {
     // Additional styles for footerBox if needed
     // backgroundColor:"red",
-    justifyContent:"space-between",
-    height:110
+    justifyContent: 'space-between',
+    height: 110,
   },
   footerText: {
-    width:"60%",
-    alignSelf:"center",
-    borderRadius:10
+    width: '60%',
+    alignSelf: 'center',
+    borderRadius: 10,
   },
   nameContainer: {
-    flexDirection:"row",
+    flexDirection: 'row',
     // backgroundColor:"red",
-    width:"100%",
-    justifyContent:"space-around"
+    width: '100%',
+    justifyContent: 'space-around',
   },
   nameInput: {
-    width: "50%",
-    alignItems:"center",
+    width: '50%',
+    alignItems: 'center',
   },
   radioContainer: {
-    flexDirection:"row",
-    justifyContent:"space-between",
-    width:"90%",
-    alignItems:"center",
-    marginBottom:10
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '90%',
+    alignItems: 'center',
+    marginBottom: 10,
     // backgroundColor:"red"
   },
   label: {
-    fontSize:14,
-    color:secondaryText
-  }
+    fontSize: 14,
+    color: secondaryText,
+  },
 });

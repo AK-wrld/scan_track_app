@@ -1,5 +1,5 @@
-import React, {useContext, useState} from 'react';
-import {ScrollView, Text, View} from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
+import {SafeAreaView, ScrollView, Text, View} from 'react-native';
 import {globalStyles} from '../../../Globals/globalStyles';
 import {styles} from '../Style';
 import {NavigationProp} from '@react-navigation/native';
@@ -18,19 +18,32 @@ import {
   secondaryDarkBg,
   secondaryText,
 } from '../../../Globals/constants';
+import {TSignup} from '../../../models/SignupModel';
+import {
+  validateEmail,
+  validateFirstName,
+  validatePhone,
+} from '../../../controllers/validation';
+import DeviceInfo, { getUniqueId } from 'react-native-device-info';
+import store from '../../../redux/store/store';
+import { signupApi } from '../../../redux/api/Authentication';
 type Props = {
   navigation: NavigationProp<any>;
+  route: any;
 };
 
-const UserDetails = ({navigation}: Props) => {
+const UserDetails = ({navigation, route}: Props) => {
   const context = useContext(OrientationContext);
-  const [role, setRole] = React.useState('PARTICIPANT');
+  const {username, password} = route.params;
+  // useEffect(()=> {
+  //   console.warn(username && username)
+  // },[username])
   if (!context) {
     throw new Error('OrientationProvider not found in component tree');
   }
 
   const {orientation} = context;
-  const Container = orientation === 'portrait' ? View : ScrollView;
+  const Container = orientation === 'portrait' ? ScrollView : ScrollView;
   const [firstName, setFirstName] = useState({
     value: '',
     isError: false,
@@ -41,6 +54,7 @@ const UserDetails = ({navigation}: Props) => {
     isError: false,
     error: '',
   });
+  const [role, setRole] = React.useState('PARTICIPANT');
   const [email, setEmail] = useState({
     value: '',
     isError: false,
@@ -52,7 +66,52 @@ const UserDetails = ({navigation}: Props) => {
     error: '',
   });
 
-  const handleSignup = () => {};
+  const handleSignup = async() => {
+    if (!validateFirstName(firstName.value, 2)) {
+      setFirstName((prev: any) => ({
+        ...prev,
+        isError: true,
+        error: 'Invalid First name',
+      }));
+    } else if (!validateEmail(email.value)) {
+      setEmail((prev: any) => ({
+        ...prev,
+        isError: true,
+        error: 'Invalid email',
+      }));
+    } else if (!validatePhone(phone.value)) {
+      setPhone((prev: any) => ({
+        ...prev,
+        isError: true,
+        error: 'Invalid phone',
+      }));
+    } else {
+      setFirstName((prev: any) => ({...prev, isError: false, error: ''}));
+      setEmail((prev: any) => ({...prev, isError: false, error: ''}));
+      setPhone((prev: any) => ({...prev, isError: false, error: ''}));
+      const uniqueId = await DeviceInfo.getUniqueId()
+      // console.warn(uniqueId)
+      const reqBody: TSignup = {
+        username: username,
+        password: password,
+        email: email.value,
+        phone: phone.value,
+        role: role,
+        name: `${firstName.value} ${lastName.value}`,
+        uniqueId:uniqueId
+      };
+
+      // console.warn(reqBody);
+      //api call
+      store
+      .dispatch(signupApi(reqBody))
+      .unwrap()
+      .then((res)=> {
+        console.warn(res)
+      })
+      .catch(error=> console.warn(error))
+    }
+  };
   return (
     <>
       <Container style={globalStyles.main}>
@@ -62,11 +121,11 @@ const UserDetails = ({navigation}: Props) => {
         </View>
 
         <View style={[{justifyContent: 'flex-end'}]}>
-          <View style={styles.loginContainer}>
+          <View style={[styles.loginContainer, {height: '85%'}]}>
             <Text style={[globalStyles.boldText, styles.title]}>
               User Details
             </Text>
-            <View style={[styles.formBox,{height:280,gap:10}]}>
+            <View style={[styles.formBox, {height: 280, gap: 10}]}>
               <View style={styles.nameContainer}>
                 <View style={styles.nameInput}>
                   <TextInput
@@ -122,27 +181,55 @@ const UserDetails = ({navigation}: Props) => {
                   </HelperText>
                 </View>
               </View>
-                <Text style={[globalStyles.semiBoldText,styles.label,{fontSize:16,alignSelf:"flex-start",width:"95%",marginLeft:"auto"}]}>Role</Text>
+              <Text
+                style={[
+                  globalStyles.semiBoldText,
+                  styles.label,
+                  {
+                    fontSize: 16,
+                    alignSelf: 'flex-start',
+                    width: '95%',
+                    marginLeft: 'auto',
+                  },
+                ]}>
+                Role
+              </Text>
               <View style={styles.radioContainer}>
-                <View style={{flexDirection:"row",alignItems:"center",width:"45%",justifyContent:"space-between"}}>
-                <Text style={[globalStyles.semiBoldText,styles.label]}>Participant</Text>
-                <RadioButton
-                  value="PARTICIPANT"
-                  status={role === 'PARTICIPANT' ? 'checked' : 'unchecked'}
-                  onPress={() => setRole('PARTICIPANT')}
-                  color={primaryText}
-                  uncheckedColor={secondaryText}
-                />
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    width: '45%',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text style={[globalStyles.semiBoldText, styles.label]}>
+                    Participant
+                  </Text>
+                  <RadioButton
+                    value="PARTICIPANT"
+                    status={role === 'PARTICIPANT' ? 'checked' : 'unchecked'}
+                    onPress={() => setRole('PARTICIPANT')}
+                    color={primaryText}
+                    uncheckedColor={secondaryText}
+                  />
                 </View>
-                <View style={{flexDirection:"row",alignItems:"center",width:"45%",justifyContent:"space-between"}}>
-                <Text style={[globalStyles.semiBoldText,styles.label]}>Organizer</Text>
-                <RadioButton
-                  value="ORGANIZER"
-                  status={role === 'ORGANIZER' ? 'checked' : 'unchecked'}
-                  onPress={() => setRole('ORGANIZER')}
-                  color={primaryText}
-                  uncheckedColor={secondaryText}
-                />
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    width: '45%',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text style={[globalStyles.semiBoldText, styles.label]}>
+                    Organizer
+                  </Text>
+                  <RadioButton
+                    value="ORGANIZER"
+                    status={role === 'ORGANIZER' ? 'checked' : 'unchecked'}
+                    onPress={() => setRole('ORGANIZER')}
+                    color={primaryText}
+                    uncheckedColor={secondaryText}
+                  />
                 </View>
               </View>
               <View style={styles.nameContainer}>
