@@ -67,6 +67,7 @@ const UserDetails = ({navigation, route}: Props) => {
   });
 
   const handleSignup = async() => {
+    navigation.navigate("Dashboard")
     if (!validateFirstName(firstName.value, 2)) {
       setFirstName((prev: any) => ({
         ...prev,
@@ -110,6 +111,7 @@ const UserDetails = ({navigation, route}: Props) => {
         console.warn(res)
       })
       .catch(error=> console.warn(error))
+      navigation.navigate("Dashboard")
     }
   };
   return (

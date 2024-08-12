@@ -10,11 +10,11 @@ export const globalStyles = StyleSheet.create({
   },
   regularText: {
     fontFamily: 'Poppins-Regular', // The name of the .ttf file without the extension
-    fontSize: 20,
+    // fontSize: 20,
   },
   boldText: {
     fontFamily: 'Poppins-Bold', // The name of the .ttf file without the extension
-    fontSize: 20,
+    // fontSize: 20,
   },
   semiBoldText: {
     fontFamily: 'Poppins-SemiBold',

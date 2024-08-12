@@ -47,6 +47,10 @@ const Signup = ({navigation}: Props) => {
   });
 
   const handleSignup = () => {
+    navigation.navigate('UserData', {
+      username: userName.value,
+      password: pass.value,
+    });
     if (!validateUsername(userName.value, 2)) {
       setUserName((prev: any) => ({
         ...prev,

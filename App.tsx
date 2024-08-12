@@ -11,7 +11,9 @@ import UserDetails from './pages/Authentication/UserDetails/UserDetails';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'; // import FontAwesome
 import { Provider } from 'react-redux';
 import store from './redux/store/store';
-const Stack = createNativeStackNavigator();
+import Dashboard from './pages/Dashboard/Dashboard';
+import { RootStackParamList } from './models/StackNavigationModel';
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const App = () => {
   return (
@@ -21,7 +23,7 @@ const App = () => {
         <OrientationProvider>
           <StatusBar backgroundColor={primaryBg} />
           <NavigationContainer>
-            <Stack.Navigator>
+            <Stack.Navigator initialRouteName="Login">
               <Stack.Screen
                 name="Login"
                 component={Login}
@@ -43,6 +45,13 @@ const App = () => {
                   headerStyle: {backgroundColor: primaryBg},
                   headerTintColor: 'white',
                   headerTitle: '',
+                }}
+              />
+              <Stack.Screen
+                name="Dashboard"
+                component={Dashboard}
+                options={{
+                  headerShown: false,
                 }}
               />
             </Stack.Navigator>
