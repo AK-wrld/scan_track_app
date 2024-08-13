@@ -10,6 +10,7 @@ export const styles = StyleSheet.create({
     borderRadius:14,
    },
    rightContainer:{
-    width:30,
+    width:40,
+
    }
 })

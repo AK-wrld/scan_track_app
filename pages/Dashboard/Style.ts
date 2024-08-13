@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
     welcome: {
         paddingLeft:20,
         color:secondaryText,
-        fontSize:20
+        fontSize:18
 
     },
     chipContainer: {

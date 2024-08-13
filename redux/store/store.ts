@@ -1,9 +1,11 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
 import signupReducer from '../reducers/signup'
+import dashboardSlice  from '../reducers/dashboard';
 
 const reducers = combineReducers({
-  signup: signupReducer
+  signup: signupReducer,
+  dashboard: dashboardSlice
 });
 
 

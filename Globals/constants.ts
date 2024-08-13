@@ -13,3 +13,7 @@ export const API_ENDPOINTS = {
     signin: `${BASE_URL}/profile/login`,
     signup: `${BASE_URL}/profile/login/create`
 }
+
+export const REGISTERED_EVENTS_HEADERS = {
+    
+}
