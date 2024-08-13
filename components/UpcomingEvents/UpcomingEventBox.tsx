@@ -3,7 +3,7 @@ import { View } from 'react-native'
 
 import { Avatar, Button, Chip, Icon, Text } from 'react-native-paper'
 import { globalStyles } from '../../Globals/globalStyles'
-import { primaryText, secondaryBg, secondaryText } from '../../Globals/constants'
+import { primaryText, secondaryBg, secondaryDarkBg, secondaryText } from '../../Globals/constants'
 import { styles } from './Style'
 
 const UpcomingEventBox = () => {
@@ -18,18 +18,20 @@ const UpcomingEventBox = () => {
                 <View style={styles.detailsBottom}>
                 <View style={styles.datesContainer}>
                     <Text style={[globalStyles.semiBoldText,styles.normalSize]}>Deadline: </Text> 
-                    <View style={{flexDirection:"row",alignItems:"center"}}>
+                    <View style={{flexDirection:"row",alignItems:"center",justifyContent:"space-between"}}>
                     <Text style={[globalStyles.regularText,styles.normalSize,{marginRight:10}]}>15 July 24, 07:22 PM 
                     </Text>
                     
-                    {/* <Chip
-                    icon={() => <Icon size={16} source="close" color={secondaryText} />}
+                    <Chip
+                    
                     compact={true}
-                    style={{backgroundColor:secondaryBg}}
-                    textStyle={[globalStyles.regularText,styles.normalSize]}>Closed</Chip> */}
+                    style={{backgroundColor:primaryText}}
+                    
+                    textStyle={[globalStyles.regularText,styles.normalSize,{color:secondaryDarkBg}]}>Scan QR</Chip>
                    
 
                     </View>
+              
                 </View>
                 
                 </View>
