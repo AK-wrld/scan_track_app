@@ -49,9 +49,9 @@ const RegisteredEvents = () => {
   return (
     <>
     <ScrollView style={styles.tableContainer}>
-        <RegisteredEventBox/>
-        <RegisteredEventBox/>
-        <RegisteredEventBox/>
+        <RegisteredEventBox eventStatus={"Live"}/>
+        <RegisteredEventBox eventStatus={"Registered"}/>
+        <RegisteredEventBox eventStatus={"Ended"}/>
     </ScrollView>
     </>
   )

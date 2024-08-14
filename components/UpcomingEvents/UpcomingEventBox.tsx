@@ -1,12 +1,18 @@
 import React from 'react'
 import { View } from 'react-native'
 
-import { Avatar, Button, Chip, Text } from 'react-native-paper'
+import { Avatar, Button, Chip, Icon, Text } from 'react-native-paper'
 import { globalStyles } from '../../Globals/globalStyles'
-import { primaryText, secondaryBg, secondaryDarkBg} from '../../Globals/constants'
+import { bgError, secondaryBg, secondaryText} from '../../Globals/constants'
 import { styles } from './Style'
-
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { RootStackParamList } from '../../models/StackNavigationModel'
+import { useNavigation } from '@react-navigation/native'
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Dashboard'>;
 const UpcomingEventBox = () => {
+  const navigation = useNavigation<NavigationProp>();
+  const isOpen = true
+ 
   return (
     <View style={styles.tableContent}>
         <View style={styles.headingContent}>
@@ -23,11 +29,11 @@ const UpcomingEventBox = () => {
                     </Text>
                     
                     <Chip
-                    
+                    icon={() => <Icon size={16} source={`${isOpen ? "check":"close"}`} color={secondaryText} />}
                     compact={true}
-                    style={{backgroundColor:primaryText}}
+                    style={{backgroundColor:isOpen?secondaryBg:bgError}}
                     
-                    textStyle={[globalStyles.regularText,styles.normalSize,{color:secondaryDarkBg}]}>Scan QR</Chip>
+                    textStyle={[globalStyles.regularText,styles.normalSize]}>{isOpen?"Open":"Registerations Closed"}</Chip>
                    
 
                     </View>
@@ -47,7 +53,7 @@ const UpcomingEventBox = () => {
               labelStyle={{fontFamily: 'Poppins-Regular'}}
               rippleColor={secondaryBg}
               mode="contained"
-            
+              onPress={()=>navigation && navigation.navigate("EventDetails")}
               style={styles.detailsBtn}
             >
               View Details

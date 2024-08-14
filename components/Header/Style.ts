@@ -6,6 +6,7 @@ export const styles = StyleSheet.create({
     backgroundColor: secondaryBg,
     paddingRight: 20,
     paddingLeft: 10,
+    justifyContent:"center"
   },
   title: {
     fontSize: 24,

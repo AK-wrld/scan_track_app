@@ -3,6 +3,7 @@ export const secondaryBg = '#61c296';
 export const primaryText = '#ffc233';
 export const secondaryText = '#fcf2ed';
 export const secondaryDarkBg = '#1c4533';
+export const bgError = '#fd5c63';
 export const quote = 'Your Partner in Efficient Attendance Management.';
 export const cookieNames = {
     jwtToken:"jwtToken"
@@ -14,6 +15,8 @@ export const API_ENDPOINTS = {
     signup: `${BASE_URL}/profile/login/create`
 }
 
-export const REGISTERED_EVENTS_HEADERS = {
-    
+export const EVENT_STATUS = {
+    REGISTERED:"Registered",
+    LIVE:"Live",
+    ENDED:"Ended"
 }

@@ -3,9 +3,18 @@ import { View } from 'react-native'
 import { styles } from './Style'
 import { Avatar, Button, Chip, Icon, Text } from 'react-native-paper'
 import { globalStyles } from '../../Globals/globalStyles'
-import { primaryText, secondaryBg, secondaryText } from '../../Globals/constants'
+import { primaryText, secondaryBg, secondaryText, EVENT_STATUS, bgError } from '../../Globals/constants';
+import {useNavigation } from '@react-navigation/native'
+import { RootStackParamList } from '../../models/StackNavigationModel'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+type EventStatusType = typeof EVENT_STATUS[keyof typeof EVENT_STATUS];
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Dashboard'>;
+type Props = {
+  eventStatus:EventStatusType,
 
-const RegisteredEventBox = () => {
+}
+const RegisteredEventBox = ({eventStatus}:Props) => {
+  const navigation = useNavigation<NavigationProp>();
   return (
     <View style={styles.tableContent}>
         <View style={styles.headingContent}>
@@ -23,10 +32,16 @@ const RegisteredEventBox = () => {
                     </Text>
                     
                     <Chip
-                    icon={() => <Icon size={16} source="close" color={secondaryText} />}
+                    icon={() => <Icon size={16} source={eventStatus===EVENT_STATUS.REGISTERED?"check": eventStatus===EVENT_STATUS.LIVE?"access-point":"close"} color={secondaryText} />}
                     compact={true}
-                    style={{backgroundColor:secondaryBg}}
-                    textStyle={[globalStyles.regularText,styles.normalSize]}>Closed</Chip>
+                    style={{backgroundColor:eventStatus===EVENT_STATUS.REGISTERED?secondaryBg:eventStatus===EVENT_STATUS.LIVE?primaryText:bgError}}
+                    textStyle={[globalStyles.regularText,styles.normalSize]}>{
+                      eventStatus===EVENT_STATUS.REGISTERED? "Registered"
+                      : 
+                      eventStatus===EVENT_STATUS.LIVE ? "Live"
+                      :
+                      "Ended"
+                    }</Chip>
                    
 
                     </View>
@@ -45,7 +60,7 @@ const RegisteredEventBox = () => {
               labelStyle={{fontFamily: 'Poppins-Regular'}}
               rippleColor={secondaryBg}
               mode="contained"
-            
+              onPress={()=>navigation && navigation.navigate("EventDetails")}
               style={styles.detailsBtn}
             >
               View Details

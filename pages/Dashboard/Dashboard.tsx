@@ -26,7 +26,7 @@ const Dashboard = () => {
     <>
       <SafeAreaView style={[globalStyles.main]}>
         <View style={styles.header}>
-          <Header />
+          <Header isBackEnabled={false} />
           <Text style={[globalStyles.italicText, styles.welcome]}>
             Welcome back, Apurba
           </Text>

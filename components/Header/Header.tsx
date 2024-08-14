@@ -11,24 +11,29 @@ import {
 } from 'react-native-paper';
 import {styles} from './Style';
 import {globalStyles} from '../../Globals/globalStyles';
-import {primaryBg, primaryText, secondaryDarkBg, secondaryText} from '../../Globals/constants';
+import { primaryText, secondaryDarkBg, secondaryText} from '../../Globals/constants';
 import MaleIcon from '../../public/male-icon.png';
-import {SvgUri} from 'react-native-svg';
-import {NavigationProp, useNavigation} from '@react-navigation/native';
+import { useNavigation} from '@react-navigation/native';
 import {RootStackParamList} from '../../models/StackNavigationModel';
-
-const Header = () => {
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'EventDetails'>;
+type Props = {
+  isBackEnabled:boolean
+}
+const Header = ({isBackEnabled}:Props) => { 
   const [visible, setVisible] = useState(false);
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
-  const navigation =
-    useNavigation<NavigationProp<RootStackParamList, 'Dashboard'>>();
+  const navigation = useNavigation<NavigationProp>();
+    
   return (
     <SafeAreaView>
       <Appbar.Header style={styles.header}>
-        <Appbar.Content
-          title={
-            <Text style={[globalStyles.boldText, styles.title]}>
+      {isBackEnabled && <Appbar.BackAction color={secondaryText} onPress={() => isBackEnabled && navigation.goBack()} />}
+        <Appbar.Content 
+          title=
+          {
+            <Text style={[globalStyles.boldText, styles.title,{justifyContent:"center"}]}>
               Scan Track
             </Text>
           }

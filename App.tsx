@@ -12,6 +12,7 @@ import {Provider} from 'react-redux';
 import store from './redux/store/store';
 import Dashboard from './pages/Dashboard/Dashboard';
 import {RootStackParamList} from './models/StackNavigationModel';
+import EventDetails from './pages/EventDetails/EventDetails';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const App = () => {
@@ -49,6 +50,13 @@ const App = () => {
                 <Stack.Screen
                   name="Dashboard"
                   component={Dashboard}
+                  options={{
+                    headerShown: false,
+                  }}
+                />
+                <Stack.Screen
+                  name="EventDetails"
+                  component={EventDetails}
                   options={{
                     headerShown: false,
                   }}
