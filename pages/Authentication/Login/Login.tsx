@@ -1,10 +1,8 @@
 import React, {useContext, useState} from 'react';
 import {ScrollView, Text, View} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import {styles} from '../Style';
 import {globalStyles} from '../../../Globals/globalStyles';
 import {
-  primaryBg,
   primaryText,
   quote,
   secondaryBg,
@@ -12,8 +10,6 @@ import {
   secondaryText,
 } from '../../../Globals/constants';
 import {Avatar, Button, HelperText, TextInput} from 'react-native-paper';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import {useNavigation} from '@react-navigation/native';
 import {NavigationProp} from '@react-navigation/native';
 import {OrientationContext} from '../../../context/OrientationContext';
 import {

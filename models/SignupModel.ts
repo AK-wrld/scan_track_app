@@ -5,5 +5,5 @@ export type TSignup = {
   role: string;
   email: string;
   phone: string;
-  uniqueId:string
+  uniqueId: string;
 };

@@ -1,9 +1,9 @@
 import React from 'react'
 import { View } from 'react-native'
 
-import { Avatar, Button, Chip, Icon, Text } from 'react-native-paper'
+import { Avatar, Button, Chip, Text } from 'react-native-paper'
 import { globalStyles } from '../../Globals/globalStyles'
-import { primaryText, secondaryBg, secondaryDarkBg, secondaryText } from '../../Globals/constants'
+import { primaryText, secondaryBg, secondaryDarkBg} from '../../Globals/constants'
 import { styles } from './Style'
 
 const UpcomingEventBox = () => {

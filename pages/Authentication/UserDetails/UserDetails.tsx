@@ -24,9 +24,9 @@ import {
   validateFirstName,
   validatePhone,
 } from '../../../controllers/validation';
-import DeviceInfo, { getUniqueId } from 'react-native-device-info';
+import DeviceInfo, {getUniqueId} from 'react-native-device-info';
 import store from '../../../redux/store/store';
-import { signupApi } from '../../../redux/api/Authentication';
+import {signupApi} from '../../../redux/api/Authentication';
 type Props = {
   navigation: NavigationProp<any>;
   route: any;
@@ -66,8 +66,8 @@ const UserDetails = ({navigation, route}: Props) => {
     error: '',
   });
 
-  const handleSignup = async() => {
-    navigation.navigate("Dashboard")
+  const handleSignup = async () => {
+    navigation.navigate('Dashboard');
     if (!validateFirstName(firstName.value, 2)) {
       setFirstName((prev: any) => ({
         ...prev,
@@ -90,7 +90,7 @@ const UserDetails = ({navigation, route}: Props) => {
       setFirstName((prev: any) => ({...prev, isError: false, error: ''}));
       setEmail((prev: any) => ({...prev, isError: false, error: ''}));
       setPhone((prev: any) => ({...prev, isError: false, error: ''}));
-      const uniqueId = await DeviceInfo.getUniqueId()
+      const uniqueId = await DeviceInfo.getUniqueId();
       // console.warn(uniqueId)
       const reqBody: TSignup = {
         username: username,
@@ -99,19 +99,19 @@ const UserDetails = ({navigation, route}: Props) => {
         phone: phone.value,
         role: role,
         name: `${firstName.value} ${lastName.value}`,
-        uniqueId:uniqueId
+        uniqueId: uniqueId,
       };
 
       // console.warn(reqBody);
       //api call
       store
-      .dispatch(signupApi(reqBody))
-      .unwrap()
-      .then((res)=> {
-        console.warn(res)
-      })
-      .catch(error=> console.warn(error))
-      navigation.navigate("Dashboard")
+        .dispatch(signupApi(reqBody))
+        .unwrap()
+        .then(res => {
+          console.warn(res);
+        })
+        .catch(error => console.warn(error));
+      navigation.navigate('Dashboard');
     }
   };
   return (

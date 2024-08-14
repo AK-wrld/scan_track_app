@@ -1,9 +1,8 @@
 import React from 'react';
 import {SafeAreaView, View} from 'react-native';
-import {Icon, IconButton, Searchbar} from 'react-native-paper';
+import {IconButton, Searchbar} from 'react-native-paper';
 import {styles} from './Style';
 import {
-  primaryText,
   secondaryBg,
   secondaryDarkBg,
 } from '../../Globals/constants';
@@ -25,7 +24,8 @@ const SearchBar = () => {
               icon="microphone"
               iconColor={secondaryDarkBg}
               style={{paddingRight: 20}}
-              onPress={() => console.warn('clicked')}></IconButton>
+              onPress={() => console.warn('clicked')}
+            />
           </View>
         )}
       />
