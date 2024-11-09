@@ -1,5 +1,6 @@
 import {StyleSheet} from 'react-native';
 import { secondaryBg, secondaryText } from '../../../Globals/constants';
+import { getShadowProps } from '../../../helper';
 
 
 export const styles = StyleSheet.create({
@@ -23,5 +24,18 @@ export const styles = StyleSheet.create({
   title:{
     fontSize:20,
     color:secondaryText
-  }
+  },
+  itemContainer: {
+    width: '100%',
+    height: 70,
+    backgroundColor: 'white',
+    marginTop: 30,
+    justifyContent: 'center',
+    ...getShadowProps(),
+    paddingLeft: 20,
+  },
+  itemText: {
+    fontSize: 17,
+    color: 'black',
+  },
 });

@@ -1,11 +1,11 @@
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
-import {StatusBar} from 'react-native';
+import {KeyboardAvoidingView, Platform, StatusBar, View} from 'react-native';
 import Login from './pages/Authentication/Login/Login';
 import Signup from './pages/Authentication/Signup/Signup';
 import {primaryBg} from './Globals/constants';
-import {PaperProvider} from 'react-native-paper';
+import {PaperProvider, Text} from 'react-native-paper';
 import {OrientationProvider} from './Provider/OrientationProvider';
 import UserDetails from './pages/Authentication/UserDetails/UserDetails';
 import {Provider} from 'react-redux';
@@ -18,6 +18,9 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const App = () => {
   return (
     <>
+     <View
+      style={{flex: 1}}
+    >
       <Provider store={store}>
         <PaperProvider>
           <OrientationProvider>
@@ -66,6 +69,7 @@ const App = () => {
           </OrientationProvider>
         </PaperProvider>
       </Provider>
+      </View>
     </>
   );
 };

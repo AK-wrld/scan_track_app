@@ -1,25 +1,133 @@
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Button, Icon, Modal, Text } from 'react-native-paper'
 import { primaryBg, secondaryBg } from '../../../Globals/constants'
 import { styles } from './Style'
 import { globalStyles } from '../../../Globals/globalStyles'
-import { View } from 'react-native'
+import { Alert, BackHandler, TouchableOpacity, View } from 'react-native'
+import { RESULTS } from 'react-native-permissions'
+import { goToSettings } from '../../../helper'
+import { EPermissionTypes, usePermissions } from '../../../context/usePermissions'
+import { CameraScanner } from '../../CameraScanner/CameraScanner'
 type Props = {
     visible:boolean,
     handleModalState: (visible:boolean)=>void
 }
 const QRModal = ({visible,handleModalState}:Props) => {
-    
+  const {askPermissions} = usePermissions(EPermissionTypes.CAMERA);
+  const [cameraShown, setCameraShown] = useState(false);
+  const [qrText, setQrText] = useState('');
+
+  let items = [
+    {
+      id: 1,
+      title: 'QR code Scanner',
+    },
+  ];
+
+  const handleBackButtonClick = useCallback(() => {
+    if (cameraShown) {
+      console.warn("Back button pressed in QRModal");
+      setCameraShown(false);
+      BackHandler.exitApp();
+      return true;
+    }
+    return false;
+  }, [cameraShown]);
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+    return () => backHandler.remove(); // Clean up the back handler
+  }, [handleBackButtonClick]);
+
+
+  const takePermissions = async () => {
+    askPermissions()
+      .then(response => {
+        //permission given for camera
+        if (
+          response.type === RESULTS.LIMITED ||
+          response.type === RESULTS.GRANTED
+        ) {
+          setCameraShown(true);
+        }
+      })
+      .catch(error => {
+        if ('isError' in error && error.isError) {
+          Alert.alert(
+            error.errorMessage ||
+              'Something went wrong while taking camera permission',
+          );
+        }
+        if ('type' in error) {
+          if (error.type === RESULTS.UNAVAILABLE) {
+            Alert.alert('This feature is not supported on this device');
+          } else if (
+            error.type === RESULTS.BLOCKED ||
+            error.type === RESULTS.DENIED
+          ) {
+            Alert.alert(
+              'Permission Denied',
+              'Please give permission from settings to continue using camera.',
+              [
+                {
+                  text: 'Cancel',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+                {text: 'Go To Settings', onPress: () => goToSettings()},
+              ],
+            );
+          }
+        }
+      });
+  };
+  useEffect(() => {
+    if (visible) {
+      takePermissions();
+    }
+  }
+  , [visible]);
+  const handleReadCode = (value: string) => {
+    console.log(value);
+    setQrText(value);
+    setCameraShown(false);
+  };
+  useEffect(()=>{
+    console.warn(cameraShown)
+  },[cameraShown])
   return (
     <>
-     <View style={styles.modal}>
-     <Button style={styles.closeIcon} icon="close" mode="contained" onPress={() => handleModalState(false)} children={undefined}>
-  </Button>
-          <Text style={[globalStyles.semiBoldText,styles.title]}>QR Code</Text>
-          {/* <Text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus dolores, at fuga harum maiores dicta dolor esse placeat vero eveniet eligendi doloribus velit, maxime autem laudantium? Eveniet voluptatibus, voluptatem maiores earum eaque sit facere laborum quod totam veniam perferendis reprehenderit assumenda, impedit, sint illo enim officiis! Ex, cum eum dicta natus itaque nihil, cupiditate, molestias architecto tempora impedit quae nobis? Nobis perferendis eligendi quo ad enim illum eum facere nesciunt, aperiam possimus non impedit eos pariatur cum! Deleniti quae quo aut maiores obcaecati laboriosam commodi quam dolores magni autem aliquid sequi, voluptatibus et, ipsum inventore placeat quas molestiae ex. Dolore animi voluptatibus minima amet veritatis doloremque, voluptatem nihil iure. Omnis, id vitae, odit cupiditate sequi reprehenderit, a recusandae aliquam eum eligendi voluptatem. Commodi quia quod laudantium omnis vitae quisquam suscipit. Aliquam vero architecto, perspiciatis facilis excepturi labore ea cumque aliquid recusandae tempora voluptas velit magni eos nulla est temporibus alias quae facere adipisci. Quaerat pariatur quos veniam. Ullam quidem voluptatum maiores in temporibus harum dolores natus ducimus ipsa, dicta eum omnis ea tempora blanditiis saepe pariatur totam sequi cupiditate! Quibusdam, iste? Earum ea eligendi laudantium animi officia placeat beatae dolor iusto vero quia qui cupiditate eos aperiam, expedita distinctio doloremque.</Text> */}
-        </View>
+      <View style={styles.modal}>
+        <Button
+          style={styles.closeIcon}
+          icon="close"
+          mode="contained"
+          onPress={() => handleModalState(false)}
+          children={undefined}
+        />
+        <Text style={[globalStyles.semiBoldText, styles.title]}>QR Code</Text>
+        {/* {items.map(eachItem => {
+          return (
+            <TouchableOpacity
+              onPress={takePermissions}
+              activeOpacity={0.5}
+              key={eachItem.id}
+              style={styles.itemContainer}
+            >
+              <Text style={styles.itemText}>{eachItem.title}</Text>
+            </TouchableOpacity>
+          );
+        })} */}
+        {cameraShown && (
+          <CameraScanner
+            setIsCameraShown={setCameraShown}
+            onReadCode={handleReadCode}
+          />
+        )}
+      </View>
     </>
-  )
+  );
 }
+
 
 export default QRModal
