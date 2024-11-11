@@ -12,21 +12,25 @@ import {
   TextInput,
 } from 'react-native-paper';
 import {
+  ACCOUNT_STATUS,
+  API_ENDPOINTS,
   primaryText,
   quote,
   secondaryBg,
   secondaryDarkBg,
   secondaryText,
 } from '../../../Globals/constants';
-import {TSignup} from '../../../models/SignupModel';
+import {TSignup} from '../../../models/Authentication';
 import {
   validateEmail,
   validateFirstName,
   validatePhone,
 } from '../../../controllers/validation';
 import DeviceInfo, {getUniqueId} from 'react-native-device-info';
-import store from '../../../redux/store/store';
+import store, { RootState } from '../../../redux/store/store';
 import {signupApi} from '../../../redux/api/Authentication';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
 type Props = {
   navigation: NavigationProp<any>;
   route: any;
@@ -35,8 +39,10 @@ type Props = {
 const UserDetails = ({navigation, route}: Props) => {
   const context = useContext(OrientationContext);
   const {username, password} = route.params;
+  const signupState = useSelector((state: RootState) => state.signup);
+  const loginState = useSelector((state: RootState) => state.login);
   // useEffect(()=> {
-  //   console.warn(username && username)
+  //   console.log(username && username)
   // },[username])
   if (!context) {
     throw new Error('OrientationProvider not found in component tree');
@@ -54,7 +60,7 @@ const UserDetails = ({navigation, route}: Props) => {
     isError: false,
     error: '',
   });
-  const [role, setRole] = React.useState('PARTICIPANT');
+  const [role, setRole] = React.useState<"ORGANISER"|"PARTICIPANT">('PARTICIPANT');
   const [email, setEmail] = useState({
     value: '',
     isError: false,
@@ -67,7 +73,7 @@ const UserDetails = ({navigation, route}: Props) => {
   });
 
   const handleSignup = async () => {
-    navigation.navigate('Dashboard');
+    // navigation.navigate('Dashboard');
     if (!validateFirstName(firstName.value, 2)) {
       setFirstName((prev: any) => ({
         ...prev,
@@ -91,7 +97,7 @@ const UserDetails = ({navigation, route}: Props) => {
       setEmail((prev: any) => ({...prev, isError: false, error: ''}));
       setPhone((prev: any) => ({...prev, isError: false, error: ''}));
       const uniqueId = await DeviceInfo.getUniqueId();
-      // console.warn(uniqueId)
+      // console.log(uniqueId)
       const reqBody: TSignup = {
         username: username,
         password: password,
@@ -100,18 +106,23 @@ const UserDetails = ({navigation, route}: Props) => {
         role: role,
         name: `${firstName.value} ${lastName.value}`,
         uniqueId: uniqueId,
+        // status:ACCOUNT_STATUS.ACTIVE
       };
 
-      // console.warn(reqBody);
+      console.log(reqBody,"1");
       //api call
       store
         .dispatch(signupApi(reqBody))
         .unwrap()
         .then(res => {
-          console.warn(res);
+          console.log(res);
+          loginState.authToken = res?.data?.token;
+          loginState.userId = res?.data?.userId;
+          navigation.navigate('Dashboard');
         })
-        .catch(error => console.warn(error));
-      navigation.navigate('Dashboard');
+        .catch(error => console.log(error));
+     
+      
     }
   };
   return (
@@ -226,9 +237,9 @@ const UserDetails = ({navigation, route}: Props) => {
                     Organizer
                   </Text>
                   <RadioButton
-                    value="ORGANIZER"
-                    status={role === 'ORGANIZER' ? 'checked' : 'unchecked'}
-                    onPress={() => setRole('ORGANIZER')}
+                    value="ORGANISER"
+                    status={role === 'ORGANISER' ? 'checked' : 'unchecked'}
+                    onPress={() => setRole('ORGANISER')}
                     color={primaryText}
                     uncheckedColor={secondaryText}
                   />
@@ -290,10 +301,11 @@ const UserDetails = ({navigation, route}: Props) => {
                 </View>
               </View>
               <Button
-                labelStyle={{fontFamily: 'Poppins-Regular'}}
+                labelStyle={{fontFamily: 'Poppins-Regular',color:secondaryText}}
                 rippleColor={secondaryBg}
                 mode="contained"
                 style={styles.loginBtn}
+                disabled={signupState.loading}
                 onPress={handleSignup}>
                 Signup
               </Button>
@@ -301,8 +313,8 @@ const UserDetails = ({navigation, route}: Props) => {
             <View style={styles.footerBox}>
               <Button
                 textColor={secondaryText}
+                labelStyle={{fontFamily: 'Poppins-Regular',color:secondaryText}}
                 style={styles.footerText}
-                labelStyle={{fontFamily: 'Poppins-Regular'}}
                 onPress={() => navigation.navigate('Login')}>
                 Existing User? Login
               </Button>

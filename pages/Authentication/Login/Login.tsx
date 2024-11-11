@@ -16,20 +16,25 @@ import {
   validatePassword,
   validateUsername,
 } from '../../../controllers/validation';
+import { TLogin } from '../../../models/Authentication';
+import store from '../../../redux/store/store';
+import { loginApi } from '../../../redux/api/Authentication';
+import { useSelector } from 'react-redux';
+import {RootState} from '../../../redux/store/store';
 type Props = {
   navigation: NavigationProp<any>;
 };
 
 const Login = ({navigation}: Props) => {
   const context = useContext(OrientationContext);
-
+  const loginState = useSelector((state: RootState) => state.login);
   if (!context) {
     throw new Error('OrientationProvider not found in component tree');
   }
 
   const {orientation} = context;
   const Container = orientation === 'portrait' ? View : ScrollView;
-  // console.warn(orientation)
+  // console.log(orientation)
   const [userName, setUserName] = useState({
     value: '',
     isError: false,
@@ -40,6 +45,7 @@ const Login = ({navigation}: Props) => {
     isError: false,
     error: '',
   });
+  const [unauthorized,setUnauthorized] = useState('')
   const handleSignin = () => {
     if (!validateUsername(userName.value, 2)) {
       setUserName((prev: any) => ({
@@ -59,6 +65,28 @@ const Login = ({navigation}: Props) => {
       setPass((prev: any) => ({...prev, isError: false, error: ''}));
 
       //api call
+      const reqBody:TLogin = {
+        username: userName.value,
+        password: pass.value,
+      }
+      store
+      .dispatch(loginApi(reqBody))
+      .unwrap()
+      .then((res) => {
+        if(res?.status===200 || res?.status===201) {
+          console.log('Data:', res);
+          setUnauthorized('')
+          navigation.navigate('Dashboard',{username:userName.value});
+
+        }
+        else {
+          setUnauthorized("Incorrect credentials")
+        }
+      })
+      .catch((error) => {
+        console.log('Error:', error);
+      }
+      );
     }
   };
   return (
@@ -120,13 +148,17 @@ const Login = ({navigation}: Props) => {
               {pass.error}
             </HelperText>
             <Button
-              labelStyle={{fontFamily: 'Poppins-Regular'}}
+              labelStyle={{fontFamily: 'Poppins-Regular',color:secondaryText}}
               rippleColor={secondaryBg}
               mode="contained"
               style={styles.loginBtn}
+              disabled={loginState.loading}
               onPress={handleSignin}>
               Login
             </Button>
+            <HelperText type="error" visible={pass.isError}>
+              {unauthorized}
+            </HelperText>
           </View>
           <View style={styles.footerBox}>
             <Avatar.Icon

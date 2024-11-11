@@ -1,18 +1,21 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { View } from 'react-native'
 
 import { Avatar, Button, Chip, Icon, Text } from 'react-native-paper'
 import { globalStyles } from '../../Globals/globalStyles'
-import { bgError, secondaryBg, secondaryText} from '../../Globals/constants'
+import { EVENT_STATUS_MAP, bgError, primaryText, secondaryBg, secondaryText} from '../../Globals/constants'
 import { styles } from './Style'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../../models/StackNavigationModel'
 import { useNavigation } from '@react-navigation/native'
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Dashboard'>;
-const UpcomingEventBox = () => {
+type props = {
+  event:any
+}
+const UpcomingEventBox = ({event}:props) => {
   const navigation = useNavigation<NavigationProp>();
-  const isOpen = true
- 
+  const isOpen = event.status
+  
   return (
     <View style={styles.tableContent}>
         <View style={styles.headingContent}>
@@ -20,7 +23,7 @@ const UpcomingEventBox = () => {
                 <Avatar.Icon icon={"email"} size={30}/>
             </View>
             <View style={styles.detailsContainer}>
-                <Text style={[globalStyles.boldText,{color:secondaryBg}]}>Event Name</Text>
+                <Text style={[globalStyles.boldText,{color:secondaryBg}]}>{event?.name}</Text>
                 <View style={styles.detailsBottom}>
                 <View style={styles.datesContainer}>
                     <Text style={[globalStyles.semiBoldText,styles.normalSize]}>Deadline: </Text> 
@@ -29,11 +32,11 @@ const UpcomingEventBox = () => {
                     </Text>
                     
                     <Chip
-                    icon={() => <Icon size={16} source={`${isOpen ? "check":"close"}`} color={secondaryText} />}
+                    icon={() => <Icon size={16} source={isOpen===EVENT_STATUS_MAP.EVENT_ACTIVE?"check": isOpen===EVENT_STATUS_MAP.EVENT_LIVE?"access-point":"close"} color={secondaryText} />}
                     compact={true}
-                    style={{backgroundColor:isOpen?secondaryBg:bgError}}
+                    style={{backgroundColor:isOpen===EVENT_STATUS_MAP.EVENT_ACTIVE?secondaryBg:isOpen===EVENT_STATUS_MAP.EVENT_LIVE?primaryText:bgError}}
                     
-                    textStyle={[globalStyles.regularText,styles.normalSize]}>{isOpen?"Open":"Registerations Closed"}</Chip>
+                    textStyle={[globalStyles.regularText,styles.normalSize]}>{isOpen===EVENT_STATUS_MAP.EVENT_ACTIVE?"Open":isOpen===EVENT_STATUS_MAP.EVENT_LIVE?"Live":"Registerations Closed"}</Chip>
                    
 
                     </View>
@@ -50,10 +53,10 @@ const UpcomingEventBox = () => {
         </View> */}
         <View style={styles.buttonsContainer}>
             <Button
-              labelStyle={{fontFamily: 'Poppins-Regular'}}
+              labelStyle={{fontFamily: 'Poppins-Regular',color:secondaryText}}
               rippleColor={secondaryBg}
               mode="contained"
-              onPress={()=>navigation && navigation.navigate("EventDetails")}
+              onPress={()=>navigation && navigation.navigate("EventDetails",{event})}
               style={styles.detailsBtn}
             >
               View Details

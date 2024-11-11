@@ -15,10 +15,13 @@ import {RootState} from '../../redux/store/store';
 import {handleTabChange} from '../../redux/reducers/dashboard';
 import RegisteredEvents from '../../components/RegisteredEvents/RegisteredEvents';
 import UpcomingEvents from '../../components/UpcomingEvents/UpcomingEvents';
-
-const Dashboard = () => {
+type Props = {
+  route:any
+}
+const Dashboard = ({route}:Props) => {
   const dispatch = useDispatch();
   const dashboardState = useSelector((state: RootState) => state.dashboard);
+  const {username} = route.params
   useEffect(() => {
     // console.warn(dashboardState.currentTab)
   }, [dashboardState.currentTab]);
@@ -28,7 +31,7 @@ const Dashboard = () => {
         <View style={styles.header}>
           <Header isBackEnabled={false} />
           <Text style={[globalStyles.italicText, styles.welcome]}>
-            Welcome back, Apurba
+            Welcome back, {username || 'User'}
           </Text>
           <SearchBar />
           <View style={styles.chipContainer}>

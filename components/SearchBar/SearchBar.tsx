@@ -24,7 +24,7 @@ const SearchBar = () => {
               icon="microphone"
               iconColor={secondaryDarkBg}
               style={{paddingRight: 20}}
-              onPress={() => console.warn('clicked')}
+              onPress={() => console.log('clicked')}
             />
           </View>
         )}

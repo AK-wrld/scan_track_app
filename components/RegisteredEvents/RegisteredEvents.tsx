@@ -1,57 +1,48 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ScrollView, View,Text } from 'react-native'
 import { styles } from './Style';
 import { Avatar, Button, Chip, Divider, Icon  } from 'react-native-paper';
 import { globalStyles } from '../../Globals/globalStyles';
-import { primaryText, secondaryBg, secondaryText } from '../../Globals/constants';
+import { EVENT_STATUS, primaryText, secondaryBg, secondaryText } from '../../Globals/constants';
 import RegisteredEventBox from './RegisteredEventBox';
-
+import store, { RootState } from '../../redux/store/store';
+import { getRegisteredEventsApi } from '../../redux/api/Events';
+import { useSelector } from 'react-redux';
+import { TGetRegisteredEvents } from '../../models/Event';
+type EventStatus = keyof typeof EVENT_STATUS;
 const RegisteredEvents = () => {
-    const [page, setPage] = React.useState<number>(0);
-  const [numberOfItemsPerPageList] = React.useState([2, 3, 4]);
-  const [itemsPerPage, onItemsPerPageChange] = React.useState(
-    numberOfItemsPerPageList[0]
-  );
-
-    const [items] = React.useState([
-        {
-          key: 1,
-          name: 'Cupcake',
-          calories: 356,
-          fat: 16,
-        },
-        {
-          key: 2,
-          name: 'Eclair',
-          calories: 262,
-          fat: 16,
-        },
-        {
-          key: 3,
-          name: 'Frozen yogurt',
-          calories: 159,
-          fat: 6,
-        },
-        {
-          key: 4,
-          name: 'Gingerbread',
-          calories: 305,
-          fat: 3.7,
-        },
-       ]);
-     
-       const from = page * itemsPerPage;
-       const to = Math.min((page + 1) * itemsPerPage, items.length);
-     
-       React.useEffect(() => {
-         setPage(0);
-       }, [itemsPerPage]);
+  const userState = useSelector((state:RootState)=>state.login)
+  const [registeredEvents,setRegisteredEvents] = React.useState([]);
+  useEffect(()=> {
+    const reqBody: TGetRegisteredEvents = {
+      userId:userState.userId
+    }
+    store
+    .dispatch(getRegisteredEventsApi(reqBody))
+    .unwrap()
+    .then((res:any) => {
+      console.log(res?.data?.registeredEvents)
+      setRegisteredEvents(res?.data?.registeredEvents);
+    })
+    .catch((error) => { 
+      console.log('Error:', error);
+    }
+    );
+  },[])
   return (
     <>
     <ScrollView style={styles.tableContainer}>
-        <RegisteredEventBox eventStatus={"Live"}/>
-        <RegisteredEventBox eventStatus={"Registered"}/>
-        <RegisteredEventBox eventStatus={"Ended"}/>
+      {
+        registeredEvents?.length>0 ? registeredEvents.map((event:any)=>{
+        
+          return <RegisteredEventBox key={event._id} event={event}/>
+        }
+          
+        
+        ):
+        <Text style={[globalStyles.semiBoldText]}>No Registered Events</Text>
+      }
+       
     </ScrollView>
     </>
   )

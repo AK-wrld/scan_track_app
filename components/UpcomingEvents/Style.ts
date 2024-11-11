@@ -71,4 +71,9 @@ export const styles = StyleSheet.create({
   teamDetailsContainer: {
     flex: 1,
   },
+  noEventText: {
+    color: secondaryText,
+    fontSize: 20,
+    textAlign:"center"
+  }
 });

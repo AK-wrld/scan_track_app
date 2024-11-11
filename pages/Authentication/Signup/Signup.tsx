@@ -16,7 +16,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import {NavigationProp} from '@react-navigation/native';
 import {OrientationContext} from '../../../context/OrientationContext';
-import {TSignup} from '../../../models/SignupModel';
+import {TSignup} from '../../../models/Authentication';
 import {
   validatePassword,
   validateUsername,
@@ -47,10 +47,10 @@ const Signup = ({navigation}: Props) => {
   });
 
   const handleSignup = () => {
-    navigation.navigate('UserData', {
-      username: userName.value,
-      password: pass.value,
-    });
+    // navigation.navigate('UserData', {
+    //   username: userName.value,
+    //   password: pass.value,
+    // });
     if (!validateUsername(userName.value, 2)) {
       setUserName((prev: any) => ({
         ...prev,
@@ -134,7 +134,7 @@ const Signup = ({navigation}: Props) => {
               {pass.error}
             </HelperText>
             <Button
-              labelStyle={{fontFamily: 'Poppins-Regular'}}
+              labelStyle={{fontFamily: 'Poppins-Regular',color:secondaryText}}
               rippleColor={secondaryBg}
               mode="contained"
               style={styles.loginBtn}
@@ -156,7 +156,7 @@ const Signup = ({navigation}: Props) => {
             <Button
               textColor={secondaryText}
               style={styles.footerText}
-              labelStyle={{fontFamily: 'Poppins-Regular'}}
+              labelStyle={{fontFamily: 'Poppins-Regular',color:secondaryText}}
               onPress={() => navigation.navigate('Login')}>
               Existing User? Login
             </Button>

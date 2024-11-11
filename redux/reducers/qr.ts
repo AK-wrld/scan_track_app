@@ -1,40 +1,41 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {signupApi} from '../api/Authentication';
+import { getAllEvents } from '../api/Events';
+import { sendQrRegister } from '../api/Qr';
 
-interface UsersState {
+interface QrState {
   loading: boolean;
   currentRequestId: undefined | string;
-  userData: any;
+  data: any;
   error: any;
 }
 const initialState = {
   loading: false,
   currentRequestId: undefined,
-  userData: null,
+  data: null,
   error: null,
-} as UsersState;
+} as QrState;
 
-export const signupSlice = createSlice({
-  name: 'Signup',
+export const qrSlice = createSlice({
+  name: 'qr',
   initialState: initialState,
   reducers: {
-    resetSignup: () => initialState,
+    resetQr: () => initialState,
   },
   extraReducers(builder) {
     builder
-      .addCase(signupApi.pending, (state, action) => {
+      .addCase(sendQrRegister.pending, (state, action) => {
         state.loading = true;
         state.currentRequestId = action.meta.requestId;
       })
-      .addCase(signupApi.fulfilled, (state, action) => {
+      .addCase(sendQrRegister.fulfilled, (state, action) => {
         const {requestId} = action.meta;
         if (state.loading && state.currentRequestId === requestId) {
           state.loading = false;
           state.currentRequestId = undefined;
-          state.userData = action.payload?.data;
+          state.data = action.payload?.data;
         }
       })
-      .addCase(signupApi.rejected, (state, action) => {
+      .addCase(sendQrRegister.rejected, (state, action) => {
         console.log('Error:', action.error);
         const {requestId} = action.meta;
         if (state.loading && state.currentRequestId === requestId) {
@@ -46,5 +47,5 @@ export const signupSlice = createSlice({
   },
 });
 
-export const {resetSignup} = signupSlice.actions;
-export default signupSlice.reducer;
+export const {resetQr} = qrSlice.actions;
+export default qrSlice.reducer;

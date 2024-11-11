@@ -8,7 +8,6 @@ export const useCustomAxios = () => {
   const defaultConfig = {
     headers: {
       Authorization: `Bearer ${authToken}`,
-      'x-source': 'SOCIETYPORTAL',
     },
   };
 

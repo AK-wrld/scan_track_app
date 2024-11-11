@@ -56,8 +56,8 @@ export const CameraScanner = ({
     codeTypes: ['qr'],
     onCodeScanned: (codes:any) => {
       if (codes.length > 0) {
-        if (codes[0].value) {
-            console.warn(codes[0].value)
+        if (codes[0]?.value) {
+            console.log(codes[0]?.value)
           setIsActive(false);
           setTimeout(() => setCodeScanned(codes[0]?.value), 500);
         }
@@ -68,7 +68,7 @@ export const CameraScanner = ({
 
 
   const onCrossClick = useCallback(() => {
-    console.warn("Back button pressed in CameraScanner");
+    console.log("Back button pressed in CameraScanner");
     setIsCameraShown(false);
     BackHandler.exitApp();
     return true;

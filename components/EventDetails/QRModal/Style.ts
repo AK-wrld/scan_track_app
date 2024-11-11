@@ -25,6 +25,10 @@ export const styles = StyleSheet.create({
     fontSize:20,
     color:secondaryText
   },
+  qrText:{
+    fontSize:14,
+    color:secondaryText
+  },
   itemContainer: {
     width: '100%',
     height: 70,

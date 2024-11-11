@@ -3,5 +3,5 @@ export type RootStackParamList = {
   Signup: undefined;
   UserData: undefined;
   Dashboard: undefined;
-  EventDetails:undefined
+  EventDetails: any;
 };

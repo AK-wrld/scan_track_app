@@ -51,6 +51,14 @@ export const styles = StyleSheet.create({
         backgroundColor:secondaryBg,
         borderRadius:14
     },
+    scanQrBtn: {
+        backgroundColor:primaryText,
+        borderRadius:14
+    },
+    attendedBtn: {
+        backgroundColor:secondaryText,
+        borderRadius:14
+    },
     registerInfoBox:{
         marginTop:14,
         gap:10,

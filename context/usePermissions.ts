@@ -16,7 +16,7 @@ export enum EPermissionTypes {
 export const usePermissions = (typeOfPermission: EPermissionTypes) => {
   const getPermission = useCallback(() => {
     //check if typeOfPermission exist in EPermissionTypes
-    console.warn(typeOfPermission)
+    console.log(typeOfPermission)
     if (
       !typeOfPermission ||
       !Object.values(EPermissionTypes).includes(typeOfPermission)

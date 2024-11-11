@@ -8,7 +8,7 @@ const initialState = {
 } as DashboardState;
 
 export const dashboardSlice = createSlice({
-  name: 'Signup',
+  name: 'dashboard',
   initialState: initialState,
   reducers: {
     resetSignup: () => initialState,
