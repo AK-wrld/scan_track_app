@@ -4,20 +4,25 @@ import { SCAN_STATUS_MAP, primaryBg, secondaryBg } from '../../../Globals/consta
 import { styles } from './Style'
 import { globalStyles } from '../../../Globals/globalStyles'
 import { Alert, BackHandler, TouchableOpacity, View } from 'react-native'
-import { RESULTS } from 'react-native-permissions'
+import { PERMISSIONS, RESULTS } from 'react-native-permissions'
 import { goToSettings } from '../../../helper'
 import { EPermissionTypes, usePermissions } from '../../../context/usePermissions'
 import { CameraScanner } from '../../CameraScanner/CameraScanner'
 import { useSelector } from 'react-redux'
 import store, { RootState } from '../../../redux/store/store'
 import { sendQrRegister } from '../../../redux/api/Qr'
+import Geolocation from 'react-native-geolocation-service';
+import { TLocationVerification } from '../../../models/Location'
+import { locationVerificationApi } from '../../../redux/api/Location'
 type Props = {
     visible:boolean,
+    isLocationNeeded:boolean,
+    eventId:string
     handleModalState: (visible:boolean)=>void
     setScanStatus: React.Dispatch<React.SetStateAction<string>>
     setVisible: React.Dispatch<React.SetStateAction<boolean>>
 }
-const QRModal = ({visible,handleModalState,setScanStatus,setVisible}:Props) => {
+const QRModal = ({visible,isLocationNeeded,eventId,handleModalState,setScanStatus,setVisible}:Props) => {
   const {askPermissions} = usePermissions(EPermissionTypes.CAMERA);
   const [cameraShown, setCameraShown] = useState(false);
   const userState = useSelector((state: RootState) => state.login);
@@ -47,7 +52,7 @@ const QRModal = ({visible,handleModalState,setScanStatus,setVisible}:Props) => {
 
 
   const takePermissions = async () => {
-    askPermissions()
+    askPermissions(PERMISSIONS.ANDROID.CAMERA)
       .then(response => {
         //permission given for camera
         if (
@@ -96,29 +101,69 @@ const QRModal = ({visible,handleModalState,setScanStatus,setVisible}:Props) => {
   const handleReadCode = (value: string) => {
     console.log(value);
     // setQrText(value);
-    store
-    .dispatch(sendQrRegister({link: value, timestamp: Date.now(), userId: userState.userId}))
-    .unwrap()
-    .then((res: any) => {
-      console.log("resss",res.data.participation.scanStatus);
-      if(res?.data?.participation?.scanStatus===SCAN_STATUS_MAP.SCAN_REJECTED) {
-        setQrText('Scan Rejected')
-        console.warn('Scan Rejected')
-        setScanStatus(SCAN_STATUS_MAP.SCAN_REJECTED)
-      }
-      else {
-        setQrText('Scan Accepted')
-        console.warn('Scan Accepted')
-        setScanStatus(SCAN_STATUS_MAP.SCAN_ACCEPTED)
-      }
-      setCameraShown(false);
-      setVisible(false);
-    })
-    .catch((error) => {
-      console.log('Error:', error);
-      setCameraShown(false);
-      setVisible(false);
-    });
+    if(isLocationNeeded) {
+      Geolocation.getCurrentPosition(
+        (position) => {
+          console.log(position.coords.latitude, position.coords.longitude);
+          //LOCATION VERIFICATION API ENDPOINT AFTER WHICH IF RESPONSE IF SUCCESFUL THEN CALL SCAN QR API
+          const reqBody:TLocationVerification = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            eventId
+          }
+          store
+          .dispatch(locationVerificationApi(reqBody))
+          .unwrap()
+          .then((res: any) => {
+            console.log(res?.error)
+            if(res.status===200 || res.status===201) {
+              console.log("Location Verified",res);
+              store
+              .dispatch(sendQrRegister({link: value, timestamp: Date.now(), userId: userState.userId}))
+              .unwrap()
+              .then((res: any) => {
+                console.log("resss",res.data.participation.scanStatus);
+                if(res?.data?.participation?.scanStatus===SCAN_STATUS_MAP.SCAN_REJECTED) {
+                  setQrText('Scan Rejected')
+                  console.warn('Scan Rejected')
+                  setScanStatus(SCAN_STATUS_MAP.SCAN_REJECTED)
+                }
+                else {
+                  setQrText('Scan Accepted')
+                  console.warn('Scan Accepted')
+                  setScanStatus(SCAN_STATUS_MAP.SCAN_ACCEPTED)
+                }
+                setCameraShown(false);
+                setVisible(false);
+              })
+              .catch((error) => {
+                console.log('Error:', error?.message);
+                setCameraShown(false);
+                setVisible(false);
+              });
+            }
+            else {
+              console.warn("Location not verified");
+              setCameraShown(false);
+                setVisible(false);
+            }
+          })
+          .catch((error:any) => {
+            // console.warn('Error:', error.message);
+            Alert.alert('Location not verified',
+                          error.message);
+            setCameraShown(false);
+                setVisible(false);
+          }
+          );
+        },
+        (error) => {
+          console.log(error?.code, error?.message);
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    );
+    }
+    
 
 
   };

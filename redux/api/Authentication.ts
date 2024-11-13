@@ -20,7 +20,7 @@ export const signupApi = createAsyncThunk(
       return {data: response.data, status: response.status};
     }catch (error: any) {
       console.log('Error');
-     rejectWithValue(error)
+     return rejectWithValue(error.response.data)
     }
   },
 );
@@ -41,7 +41,7 @@ export const loginApi = createAsyncThunk(
       return {data: response.data, status: response.status};
     }catch (error: any) {
       console.log('Error');
-     rejectWithValue(error)
+      return rejectWithValue(error.response.data)
     }
   },
 );

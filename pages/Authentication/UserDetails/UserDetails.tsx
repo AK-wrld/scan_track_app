@@ -120,7 +120,7 @@ const UserDetails = ({navigation, route}: Props) => {
           loginState.userId = res?.data?.userId;
           navigation.navigate('Dashboard');
         })
-        .catch(error => console.log(error));
+        .catch(error => console.log(error?.message));
      
       
     }

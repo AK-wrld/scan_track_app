@@ -20,7 +20,7 @@ export const sendQrRegister = createAsyncThunk(
     
         return { data: response.data, status: response.status };
         } catch (error: any) {
-        rejectWithValue(error);
+            return rejectWithValue(error.response.data)
         }
     }
 )

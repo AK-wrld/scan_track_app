@@ -21,6 +21,7 @@
     "react-native": "0.74.4",
     "react-native-device-info": "^11.1.0",
     "react-native-dotenv": "^3.4.11",
+    "react-native-geolocation-service": "^5.3.1",
     "react-native-hole-view": "^3.0.0-alpha4",
     "react-native-paper": "^5.12.5",
     "react-native-permissions": "^5.1.0",

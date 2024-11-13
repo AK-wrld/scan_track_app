@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ScrollView, Text, View } from 'react-native'
+import { Alert, AppState, ScrollView, Text, View } from 'react-native'
 import { globalStyles } from '../../Globals/globalStyles'
 import Header from '../../components/Header/Header'
 import { styles } from './Style'
@@ -10,6 +10,9 @@ import { useSelector } from 'react-redux'
 import store, { RootState } from '../../redux/store/store'
 import { checkRegStatus, registerEvent } from '../../redux/api/Events'
 import { TRegStatus, TRegisterEvent } from '../../models/Event'
+import { EPermissionTypes, usePermissions } from '../../context/usePermissions'
+import { PERMISSIONS, check } from 'react-native-permissions'
+import { goToSettings } from '../../helper'
 
 type Props = {
     route: any;
@@ -20,11 +23,73 @@ const EventDetails = ({route}:Props) => {
     const userState = useSelector((state:RootState)=>state.login)
     const [isRegistered,setIsRegistered] = useState<boolean>(false)
     const [scanStatus,setScanStatus] = useState<string>("SCAN_PENDING")
+    const {checkPermission} = usePermissions(EPermissionTypes.LOCATION)
+    const [isLocationPermission,setIsLocationPermission] = useState<boolean>(true)
+    const [isLocationNeeded,setIsLocationNedded] = useState<boolean>(false)
     const {userId} = userState
     const eventStatus = event?.eventId?.status || event?.status
+
     const handleModalState = (visible:boolean)=>{
-        setVisible(visible)
+        if(isLocationNeeded && !isLocationPermission) {
+            Alert.alert(
+                'Permission Denied',
+                'Please give permission from settings to continue using location.',
+                [
+                  {
+                    text: 'Cancel',
+                    onPress: () =>  console.log("location permission denied"),
+                    style: 'cancel',
+                  },
+                  {text: 'Go To Settings', onPress: () => goToSettings()},
+                ],
+              );
+            
+        }
+        else {
+            console.log("either location is needed and permission is given or location is not needed at all")
+            setVisible(visible)
+        }
     }
+    useEffect(() => {
+        const checkLocationPermission = async () => {
+            // Check if this event requires location permission to scan QR or not
+            console.log("Checking if location is needed for this event");
+            // setIsLocationNedded(true) checking if location is being obtained
+            // setIsLocationPermission(true)
+            console.log(event?.eventId.scan?.location)
+            if (event?.eventId?.scan?.location) {
+                setIsLocationNedded(true);
+                try {
+                    const res = await checkPermission(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+                    setIsLocationPermission(res);
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+        };
+    
+        checkLocationPermission();
+        const handleAppStateChange = async (nextAppState:any) => {
+            if (nextAppState === 'active' && isLocationNeeded) {
+              // Re-check location permission when app comes to the foreground
+              try {
+                const res = await checkPermission(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+                setIsLocationPermission(res);
+              } catch (error) {
+                console.log(error);
+              }
+            }
+          };
+      
+          const subscription = AppState.addEventListener('change', handleAppStateChange);
+      
+          return () => {
+            subscription.remove();
+          };
+    }, [event,isLocationNeeded]);
+    useEffect(()=> {
+        console.log({isLocationPermission,isLocationNeeded})
+    })
     useEffect(()=> {
         if(event && event?.scanStatus) setScanStatus(event.scanStatus)
         if(userId && event && !event.registered) {
@@ -46,7 +111,7 @@ const EventDetails = ({route}:Props) => {
                     console.log("Error:",res)
                 }
             })
-            .catch((error)=>console.log(error))
+            .catch((error)=>console.log(error?.message))
         }
         else  {
             setIsRegistered(true)
@@ -74,14 +139,14 @@ const EventDetails = ({route}:Props) => {
                 console.log("error occured")
             }
         })
-        .catch((error)=>console.log(error))
+        .catch((error)=>console.log(error?.message))
     }
   return (
     <>
     <ScrollView style={[globalStyles.main]}>
         <Header isBackEnabled={true}/>
         {
-            visible?<QRModal visible={visible} handleModalState={handleModalState} setScanStatus={setScanStatus} setVisible={setVisible}/>
+            visible?<QRModal visible={visible} eventId={event.eventId?._id} isLocationNeeded={isLocationNeeded} handleModalState={handleModalState} setScanStatus={setScanStatus} setVisible={setVisible}/>
             :
             <>
             <View style={styles.title}>

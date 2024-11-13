@@ -25,7 +25,7 @@ const RegisteredEvents = () => {
       setRegisteredEvents(res?.data?.registeredEvents);
     })
     .catch((error) => { 
-      console.log('Error:', error);
+      console.log('Error:', error?.message);
     }
     );
   },[])

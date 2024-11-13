@@ -1,6 +1,6 @@
 import {useCallback} from 'react';
 import { Platform } from 'react-native';
-import {PERMISSIONS, RESULTS, request} from 'react-native-permissions';
+import {PERMISSIONS, RESULTS, check, request} from 'react-native-permissions';
 import { isAndroid, isIos } from '../helper';
 
 export type TUsePermissionsReturnType = {
@@ -11,6 +11,7 @@ export type TUsePermissionsReturnType = {
 
 export enum EPermissionTypes {
   CAMERA = 'camera',
+  LOCATION = 'location',
 }
 
 export const usePermissions = (typeOfPermission: EPermissionTypes) => {
@@ -27,6 +28,8 @@ export const usePermissions = (typeOfPermission: EPermissionTypes) => {
       switch (typeOfPermission) {
         case EPermissionTypes.CAMERA:
           return PERMISSIONS.IOS.CAMERA;
+        case EPermissionTypes.LOCATION:
+          return PERMISSIONS.IOS.LOCATION_WHEN_IN_USE;
         default:
           return PERMISSIONS.IOS.CAMERA;
       }
@@ -36,6 +39,9 @@ export const usePermissions = (typeOfPermission: EPermissionTypes) => {
       switch (typeOfPermission) {
         case EPermissionTypes.CAMERA:
           return PERMISSIONS.ANDROID.CAMERA;
+
+        case EPermissionTypes.LOCATION:
+          return PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
         default:
           return PERMISSIONS.ANDROID.CAMERA;
       }
@@ -45,14 +51,14 @@ export const usePermissions = (typeOfPermission: EPermissionTypes) => {
   }, [typeOfPermission]);
 
   const askPermissions =
-    useCallback(async (): Promise<TUsePermissionsReturnType> => {
+    useCallback(async (permission:any): Promise<TUsePermissionsReturnType> => {
       return new Promise<TUsePermissionsReturnType>(async (resolve, reject) => {
         //ask permissions from user
         //if error present, return error
         
         try {
         //   await request(getPermission()).then(result => {
-          request(PERMISSIONS.ANDROID.CAMERA).then(result => {
+          request(permission).then(result => {
             switch (result) {
               case RESULTS.UNAVAILABLE:
                    
@@ -90,8 +96,24 @@ export const usePermissions = (typeOfPermission: EPermissionTypes) => {
         }
       });
     }, [getPermission]);
-
+    const checkPermission = async (permission:any): Promise<boolean> => {
+      return await check(permission).then((status) => {
+        switch (status) {
+          case RESULTS.UNAVAILABLE:
+            return false;
+          case RESULTS.DENIED:
+            return false;
+          case RESULTS.BLOCKED:
+            return false;
+          case RESULTS.GRANTED:
+            return true;
+          case RESULTS.LIMITED:
+            return true;
+        }
+      });
+    }
   return {
     askPermissions,
+    checkPermission
   };
 };

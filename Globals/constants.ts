@@ -18,6 +18,7 @@ export const API_ENDPOINTS = {
     checkRegisterationStatus: `${BASE_URL}/participant/register/status`,
     registerEvent: `${BASE_URL}/participant/register`,
     getRegisteredEvents: `${BASE_URL}/participant/register/user`,
+    verifyLocation: `${BASE_URL}/participant/location`,
     
 }
 

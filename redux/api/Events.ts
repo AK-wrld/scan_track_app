@@ -34,7 +34,7 @@ export const registerEvent = createAsyncThunk(
         return { data: response.data, status: response.status };
         } catch (error: any) {
            
-        rejectWithValue(error)
+        return rejectWithValue(error.response.data)
         }
     }
 )
@@ -51,8 +51,8 @@ export const checkRegStatus = createAsyncThunk(
     
         return { data: response.data, status: response.status };
         } catch (error: any) {
-            console.log("hello")
-        rejectWithValue(error)
+            
+        return rejectWithValue(error.response.data)
         }
     }
 )
@@ -70,7 +70,7 @@ export const getRegisteredEventsApi = createAsyncThunk(
     
         return { data: response.data, status: response.status };
         } catch (error: any) {
-        rejectWithValue(error)
+            return rejectWithValue(error.response.data)
         }
     }
 )

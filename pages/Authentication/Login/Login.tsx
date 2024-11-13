@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import {ScrollView, Text, View} from 'react-native';
+import {Alert, ScrollView, Text, View} from 'react-native';
 import {styles} from '../Style';
 import {globalStyles} from '../../../Globals/globalStyles';
 import {
@@ -21,12 +21,16 @@ import store from '../../../redux/store/store';
 import { loginApi } from '../../../redux/api/Authentication';
 import { useSelector } from 'react-redux';
 import {RootState} from '../../../redux/store/store';
+import { EPermissionTypes, usePermissions } from '../../../context/usePermissions';
+import { PERMISSIONS } from 'react-native-permissions';
+import { goToSettings } from '../../../helper';
 type Props = {
   navigation: NavigationProp<any>;
 };
 
 const Login = ({navigation}: Props) => {
   const context = useContext(OrientationContext);
+  const {checkPermission} = usePermissions(EPermissionTypes.LOCATION)
   const loginState = useSelector((state: RootState) => state.login);
   if (!context) {
     throw new Error('OrientationProvider not found in component tree');
@@ -72,10 +76,25 @@ const Login = ({navigation}: Props) => {
       store
       .dispatch(loginApi(reqBody))
       .unwrap()
-      .then((res) => {
+      .then(async (res) => {
         if(res?.status===200 || res?.status===201) {
           console.log('Data:', res);
           setUnauthorized('')
+          if(await checkPermission(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)===false) {
+            console.log("Permission not granted")
+            Alert.alert(
+              'Permission Denied',
+              'Please give permission from settings to continue using location.',
+              [
+                {
+                  text: 'Cancel',
+                  onPress: () =>  navigation.navigate('Dashboard',{username:userName.value}),
+                  style: 'cancel',
+                },
+                {text: 'Go To Settings', onPress: () => goToSettings()},
+              ],
+            );
+          }
           navigation.navigate('Dashboard',{username:userName.value});
 
         }
@@ -84,7 +103,7 @@ const Login = ({navigation}: Props) => {
         }
       })
       .catch((error) => {
-        console.log('Error:', error);
+        console.log('Error:', error?.message);
       }
       );
     }

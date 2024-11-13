@@ -5,12 +5,14 @@ import loginReducer from '../reducers/login';
 import dashboardSlice from '../reducers/dashboard';
 import eventSlice from '../reducers/events';
 import qrSlice from '../reducers/qr';
+import  locationSlice from '../reducers/location';
 const reducers = combineReducers({
   signup: signupReducer,
   login: loginReducer,
   dashboard: dashboardSlice,
   events: eventSlice,
   qr: qrSlice,
+  location:locationSlice
 });
 
 export const store = configureStore({

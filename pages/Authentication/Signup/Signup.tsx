@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {ScrollView, Text, View} from 'react-native';
+import {Alert, ScrollView, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {styles} from '../Style';
 import {globalStyles} from '../../../Globals/globalStyles';
@@ -21,6 +21,9 @@ import {
   validatePassword,
   validateUsername,
 } from '../../../controllers/validation';
+import { EPermissionTypes, usePermissions } from '../../../context/usePermissions';
+import { PERMISSIONS, RESULTS } from 'react-native-permissions';
+import { goToSettings } from '../../../helper';
 
 type Props = {
   navigation: NavigationProp<any>;
@@ -28,7 +31,7 @@ type Props = {
 
 const Signup = ({navigation}: Props) => {
   const context = useContext(OrientationContext);
-
+  const {askPermissions} = usePermissions(EPermissionTypes.LOCATION);
   if (!context) {
     throw new Error('OrientationProvider not found in component tree');
   }
@@ -67,12 +70,54 @@ const Signup = ({navigation}: Props) => {
     } else {
       setUserName((prev: any) => ({...prev, isError: false, error: ''}));
       setPass((prev: any) => ({...prev, isError: false, error: ''}));
-
-      //send username and pass to userData
-      navigation.navigate('UserData', {
-        username: userName.value,
-        password: pass.value,
+      askPermissions(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
+      .then((res:any)=> {
+        if (
+          res.type === RESULTS.LIMITED ||
+          res.type === RESULTS.GRANTED
+        ) {
+          console.log("Permission granted",res)
+          navigation.navigate('UserData', {
+            username: userName.value,
+            password: pass.value,
+          });
+        }
+      })
+      .catch(error => {
+        if ('isError' in error && error.isError) {
+          Alert.alert(
+            error.errorMessage ||
+              'Something went wrong while taking location permission',
+          );
+        }
+        if ('type' in error) {
+          if (error.type === RESULTS.UNAVAILABLE) {
+            Alert.alert('This feature is not supported on this device');
+          } else if (
+            error.type === RESULTS.BLOCKED ||
+            error.type === RESULTS.DENIED
+          ) {
+            Alert.alert(
+              'Permission Denied',
+              'Please give permission from settings to continue using location.',
+              [
+                {
+                  text: 'Cancel',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+                {text: 'Go To Settings', onPress: () => goToSettings()},
+              ],
+            );
+          }
+        }
+        navigation.navigate('UserData', {
+          username: userName.value,
+          password: pass.value,
+        });
       });
+      //send username and pass to userData
+   
     }
   };
   return (
